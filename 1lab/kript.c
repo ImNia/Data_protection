@@ -9,20 +9,19 @@
  * и модуль по которому берется.
  * На выходе результат возыедения числа в степень по модулю.
  * */
-int module_power(int base, int power_exponent, int moduli)
+long long module_power(long long base, long long power_exponent, long long moduli)
 {
-    int help = base;
-    int result = 1;
+    long long help = base;
+    long long result = 1;
 
     while(power_exponent != 0){
         if((power_exponent & 1) == 1){
-            result = result * (help % moduli);
+            result = (result * help) % moduli;
         }
-        help = help * (help % moduli);
+        help = (help * help) % moduli;
 
         power_exponent = power_exponent >> 1;
     }
-    result = result % moduli;
 
     return result;
 }
@@ -33,17 +32,17 @@ int module_power(int base, int power_exponent, int moduli)
  * Функция возвращает указатель на массив в котором хранится НОД
  * и коффициенты для вычисления НОДа по формуле a*x+b*y = HOД
  * */
-int *evklid(int _older, int _junior)
+int *evklid(long long _older, long long _junior)
 {
-    int intermediate[3];
+    long long intermediate[3];
     if(_junior > _older){
         intermediate[0] = _older;
         _older = _junior;
         _junior = _older;
     }
    
-    int *older = (int*)malloc(4);
-    int *junior = (int*)malloc(4);
+    long long *older = (long long*)malloc(4);
+    long long *junior = (long long*)malloc(4);
     older[0] = _older;
     older[1] = 1;
     older[2] = 0;
@@ -51,7 +50,7 @@ int *evklid(int _older, int _junior)
     junior[1] = 0;
     junior[2] = 1;
 
-    int q;
+    long long q;
     while(junior[0] != 0){
         q = older[0] / junior[0];
         intermediate[0] = older[0] % junior[0];
@@ -70,18 +69,23 @@ int *evklid(int _older, int _junior)
  * На вход принимает число. На выходе 0 - число простое,
  * 1 - число не простое.
  * */
-int test_prime(int number)
+int test_prime(long long number)
 {
-    int count = number - 1;
-    int help = 1;
-    for(int test_number = 2; test_number < TEST; test_number++){
-        while(count > 0){
-            help *= test_number;
-            count--;
-        }
-        if(help % number != 1)
+    if(number == 2)
+        return 0;
+printf("1"); 
+    long long help;
+    int *gcd;
+    for(int i = 0; i < 100; i++){
+        help  = (rand() % (number - 2)) + 2;
+        gcd = evklid(help, number);
+        if(gcd[0] != 1)
+            return 1;
+        if(module_power(help, number - 1, number) != 1)
             return 1;
     }
+printf("2"); 
+
     return 0;
 }
 
@@ -89,16 +93,13 @@ int test_prime(int number)
  * */
 int p_generation()
 {
-    srand(time(NULL));
     int p;
     while(1){
         p = 10 + rand() % 1000;
         if(test_prime(p) == 1)
             continue;
-        else{
-            p = (p*p*p - (p+1)*(p+1)*(p+1))/(p-(p+1));
-            return p;
-        }
+        else
+            return p; 
     }
 }
 
@@ -106,7 +107,6 @@ int p_generation()
  * */
 int g_generation(int p)
 {
-    srand(time(NULL));
     int g;
     while(1){
         g = 1 + rand() % p;
@@ -120,6 +120,7 @@ int g_generation(int p)
 
 int main()
 {
+    srand(time(NULL));
     int p, g;
     p = p_generation();
     g = g_generation(p);
