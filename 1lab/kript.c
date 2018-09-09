@@ -119,7 +119,6 @@ int g_generation(int p)
  * */
 void diffie_hellman()
 {
-    srand(time(NULL));
     int p, g;
     p = p_generation();
     g = g_generation(p);
@@ -146,7 +145,51 @@ void diffie_hellman()
     printf("second = %d\n", second_key);
 }
 
+/* Функция, которая решает задачу нахождения дискретного логарифма
+ * при помощи алгоритма "Шаг младенца, шаг великана".
+ * Функция на вход получает основание числа которое возводится в степень,
+ * число от которого берется модуль и результат этого выражения.
+ * На выходе число в которое возводится основание числа.
+ * */
+int child_giant(long long base, long long moduli, long long answer)
+{
+    int m = 1 + rand() % (moduli / 2);
+    int k = 1 + rand() % (moduli / 2);
+
+    int *row_y = (int*)malloc(m + 1);
+    int *row_a = (int*)malloc(k + 1);
+
+    int pow_ay = 1;
+    int help;
+    for(int i = 0; i < m; i++){
+        help = i;
+        while(help > 0){
+            pow_ay *= base;
+            help--;
+        }
+        row_y[i] = (pow_ay * answer) % moduli;
+        pow_ay = 1;
+    }
+
+    int x;
+    for(int j = 1; j < k + 1; j++){
+        row_a[j] = module_power(base, j * m, moduli);
+        for(int i = 0; i < m; i++){
+            if(row_a[j] == row_y[i]){
+                x = j * m - i;
+                return x;
+            }
+        }
+    }
+    return 1;
+}
+
 int main()
 {
+    srand(time(NULL));
+
+    int x = child_giant(2, 23, 9);
+    printf("x = %d\n", x);
+
     return 0;
 }
