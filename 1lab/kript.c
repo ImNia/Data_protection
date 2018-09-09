@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TEST 10
-
 /* Функция быстрого возведения числа в степень по модулю.
  * На вход получает основание, степень в которую возводят
  * и модуль по которому берется.
@@ -38,7 +36,7 @@ int *evklid(long long _older, long long _junior)
     if(_junior > _older){
         intermediate[0] = _older;
         _older = _junior;
-        _junior = _older;
+        _junior = intermediate[0];
     }
    
     long long *older = (long long*)malloc(4);
@@ -73,18 +71,16 @@ int test_prime(long long number)
 {
     if(number == 2)
         return 0;
-printf("1"); 
     long long help;
-    int *gcd;
+    int *gcd = (int*)malloc(4);
     for(int i = 0; i < 100; i++){
         help  = (rand() % (number - 2)) + 2;
-        gcd = evklid(help, number);
+        gcd = evklid(number, help);
         if(gcd[0] != 1)
             return 1;
         if(module_power(help, number - 1, number) != 1)
             return 1;
     }
-printf("2"); 
 
     return 0;
 }
@@ -118,7 +114,10 @@ int g_generation(int p)
     }
 }
 
-int main()
+/* Функция построения общего ключа для двух абонентов по схеме
+ * Диффи-Хеллмана.
+ * */
+void diffie_hellman()
 {
     srand(time(NULL));
     int p, g;
@@ -145,6 +144,9 @@ int main()
 
     printf("first = %d\n", first_key);
     printf("second = %d\n", second_key);
+}
 
+int main()
+{
     return 0;
 }
