@@ -1,9 +1,10 @@
 CC = gcc -Wall
 
-all: test
+all: kript test
 
-test: kript.c
-	$(CC) -g -o test kript.c
+kript: kript.c test.c
+	$(CC) -g -o test kript.c test.c -lm
 
 clean:
 	rm test
+	rm kript

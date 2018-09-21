@@ -1,6 +1,9 @@
+#include "kript.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 /* Функция быстрого возведения числа в степень по модулю.
  * На вход получает основание, степень в которую возводят
@@ -30,7 +33,7 @@ long long module_power(long long base, long long power_exponent, long long modul
  * Функция возвращает указатель на массив в котором хранится НОД
  * и коффициенты для вычисления НОДа по формуле a*x+b*y = HOД
  * */
-int *evklid(long long _older, long long _junior)
+long long *evklid(long long _older, long long _junior)
 {
     long long intermediate[3];
     if(_junior > _older){
@@ -72,7 +75,7 @@ int test_prime(long long number)
     if(number == 2)
         return 0;
     long long help;
-    int *gcd = (int*)malloc(4);
+    long long *gcd = (long long*)malloc(4);
     for(int i = 0; i < 100; i++){
         help  = (rand() % (number - 2)) + 2;
         gcd = evklid(number, help);
@@ -153,30 +156,36 @@ void diffie_hellman()
  * */
 int child_giant(long long base, long long moduli, long long answer)
 {
-    int m = 1 + rand() % (moduli / 2);
-    int k = 1 + rand() % (moduli / 2);
+    int m = sqrt(moduli) + 1;
+    int k = sqrt(moduli) + 2;
+
+    printf("%d\n", m);
+    printf("%d\n", k);
 
     int *row_y = (int*)malloc(m + 1);
     int *row_a = (int*)malloc(k + 1);
 
-    int pow_ay = 1;
+    int pow_ay;
     int help;
     for(int i = 0; i < m; i++){
         help = i;
+        pow_ay = 1;
         while(help > 0){
             pow_ay *= base;
             help--;
         }
         row_y[i] = (pow_ay * answer) % moduli;
-        pow_ay = 1;
+printf("big: %d\n", row_y[i]);
     }
 
     int x;
     for(int j = 1; j < k + 1; j++){
         row_a[j] = module_power(base, j * m, moduli);
+printf("little: %d\n", row_a[j]);
         for(int i = 0; i < m; i++){
             if(row_a[j] == row_y[i]){
                 x = j * m - i;
+                printf("Count itera: %d\n", j);
                 return x;
             }
         }
@@ -184,12 +193,3 @@ int child_giant(long long base, long long moduli, long long answer)
     return 1;
 }
 
-int main()
-{
-    srand(time(NULL));
-
-    int x = child_giant(2, 23, 9);
-    printf("x = %d\n", x);
-
-    return 0;
-}

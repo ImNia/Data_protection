@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-int *evklid(int _older, int _junior);
-
+long long module_power(long long base, long long power_exponent, long long moduli);
+long long *evklid(long long _older, long long _junior);
+void diffie_hellman();
+int child_giant(long long base, long long moduli, long long answer);
 
 #endif
