@@ -7,4 +7,3 @@ kript: kript.c test.c
 
 clean:
 	rm test
-	rm kript

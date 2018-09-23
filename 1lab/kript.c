@@ -156,8 +156,8 @@ void diffie_hellman()
  * */
 int child_giant(long long base, long long moduli, long long answer)
 {
-    int m = sqrt(moduli) + 1;
-    int k = sqrt(moduli) + 2;
+    int m = sqrt(moduli) + 2;
+    int k = sqrt(moduli) + 1;
 
     printf("%d\n", m);
     printf("%d\n", k);
@@ -182,14 +182,13 @@ printf("big: %d\n", row_y[i]);
     for(int j = 1; j < k + 1; j++){
         row_a[j] = module_power(base, j * m, moduli);
 printf("little: %d\n", row_a[j]);
+                printf("Count itera: %d\n", j);
         for(int i = 0; i < m; i++){
             if(row_a[j] == row_y[i]){
                 x = j * m - i;
-                printf("Count itera: %d\n", j);
                 return x;
             }
         }
     }
     return 1;
 }
-
