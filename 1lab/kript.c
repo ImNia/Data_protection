@@ -6,6 +6,8 @@
 #include <time.h>
 #include <math.h>
 
+#include <sys/time.h>
+
 struct listnode *hashtab[HASHTAB_SIZE];
 
 /* Функция быстрого возведения числа в степень по модулю.
@@ -151,10 +153,13 @@ void diffie_hellman()
     printf("second = %d\n", second_key);
 }
 
-/*static int cmp(const void *p1, const void *p2){
-    return *(int*)p1 - *(int*)p2;
+double wtime()
+{
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return (double)t.tv_sec + (double)t.tv_usec * 1E-6;
 }
-*/
+
 /* Функция, которая решает задачу нахождения дискретного логарифма
  * при помощи алгоритма "Шаг младенца, шаг великана".
  * Функция на вход получает основание числа которое возводится в степень,
@@ -164,26 +169,20 @@ void diffie_hellman()
 int child_giant(long long base, long long moduli, long long answer)
 {
     hashtab_init(hashtab);
+    struct listnode *node;
     int m = sqrt(moduli) + 2;
     int k = sqrt(moduli) + 1;
 
-//    printf("%d\n", m);
-//    printf("%d\n", k);
+    printf("%d\t%d\n", m, k);
 
     int *row_y = (int*)malloc(m + 1);
     int *row_a = (int*)malloc(k + 1);
 
-    int pow_ay;
-    int help;
+    double t;
+    t = wtime();
+    
     for(int i = 0; i < m; i++){
-        help = i;
-        pow_ay = 1;
-        while(help > 0){
-            pow_ay *= base;
-            help--;
-        }
-        row_y[i] = (pow_ay * answer) % moduli;
-
+        row_y[i] = ((module_power(base, i, moduli)) * (answer % moduli)) % moduli;
         hashtab_add(hashtab, i, row_y[i]);
 //        printf("big: %d\n", row_y[i]);
     }
@@ -191,12 +190,16 @@ int child_giant(long long base, long long moduli, long long answer)
     for(int j = 1; j < k + 1; j++){
         row_a[j] = module_power(base, j * m, moduli);
 //printf("little: %d\n", row_a[j]);
-        for(int i = 0; i < m; i++){
-            if(hashtab_lookup(hashtab, i, row_a[j]) != NULL){
-                x = j * m - i;
+//        for(int i = 0; i < m; i++){
+//            if(row_a[j] == row_y[i]){
+        node = hashtab_lookup(hashtab, 0, row_a[j]);
+        if(node != NULL){
+                x = j * m - node->key;
+                t = wtime() - t;
+                printf("Time: %.6f sec.\n", t);
                 return x;
             }
-        }
+//        }
     }
-    return 1;
+    return -1;
 }
