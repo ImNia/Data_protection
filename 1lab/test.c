@@ -18,8 +18,8 @@ int main()
 
 //    diffie_hellman();
 
-//    int x = child_giant(97, 11, 9);
-//    printf("x = %d\n", x);
+    int x = child_giant(1331, 171, 134);
+    printf("x = %d\n", x);
 
     return 0;
 }
