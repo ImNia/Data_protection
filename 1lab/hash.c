@@ -31,13 +31,13 @@ void hashtab_add(struct listnode **hashtab, int key, int value)
     }
 }
 
-struct listnode *hashtab_lookup(struct listnode **hashtab, int key, int value)
+struct listnode *hashtab_lookup(struct listnode **hashtab, int key)
 {
     int index = hashtab_hash(key);
 	struct listnode *node;
 
     for(node = hashtab[index]; node != NULL; node = node->next){
-        if(node->value == value){
+        if(node->key == key){
             return node;
         }
     }

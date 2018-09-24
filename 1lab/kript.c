@@ -183,20 +183,18 @@ int child_giant(long long base, long long moduli, long long answer)
     
     for(int i = 0; i < m; i++){
         row_y[i] = ((module_power(base, i, moduli)) * (answer % moduli)) % moduli;
-        hashtab_add(hashtab, i, row_y[i]);
-//        printf("big: %d\n", row_y[i]);
+        hashtab_add(hashtab, row_y[i], i);
     }
     int x;
     for(int j = 1; j < k + 1; j++){
         row_a[j] = module_power(base, j * m, moduli);
-//printf("little: %d\n", row_a[j]);
 //        for(int i = 0; i < m; i++){
 //            if(row_a[j] == row_y[i]){
-        node = hashtab_lookup(hashtab, 0, row_a[j]);
+        node = hashtab_lookup(hashtab, row_a[j]);
         if(node != NULL){
-                x = j * m - node->key;
+                x = j * m - node->value;
                 t = wtime() - t;
-                printf("Time: %.6f sec.\n", t);
+//                printf("Time: %.6f sec.\n", t);
                 return x;
             }
 //        }
