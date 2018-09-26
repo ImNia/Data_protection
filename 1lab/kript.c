@@ -38,7 +38,7 @@ long long module_power(long long base, long long power_exponent, long long modul
  * Функция возвращает указатель на массив в котором хранится НОД
  * и коффициенты для вычисления НОДа по формуле a*x+b*y = HOД
  * */
-long long *evklid(long long _older, long long _junior)
+void evklid(long long _older, long long _junior, long long *older)
 {
     long long intermediate[3];
     if(_junior > _older){
@@ -47,7 +47,6 @@ long long *evklid(long long _older, long long _junior)
         _junior = intermediate[0];
     }
    
-    long long *older = (long long*)malloc(4);
     long long *junior = (long long*)malloc(4);
     older[0] = _older;
     older[1] = 1;
@@ -68,7 +67,7 @@ long long *evklid(long long _older, long long _junior)
         }
     }
 
-    return older;
+    free(junior);
 }
 
 /* Проверка числа на простоту, с помощью теста Ферма.
@@ -83,12 +82,17 @@ int test_prime(long long number)
     long long *gcd = (long long*)malloc(4);
     for(int i = 0; i < 100; i++){
         help  = (rand() % (number - 2)) + 2;
-        gcd = evklid(number, help);
-        if(gcd[0] != 1)
+        evklid(number, help, gcd);
+        if(gcd[0] != 1){
+            free(gcd);
             return 1;
-        if(module_power(help, number - 1, number) != 1)
+        }
+        if(module_power(help, number - 1, number) != 1){
+            free(gcd);
             return 1;
+        }
     }
+    free(gcd);
 
     return 0;
 }
@@ -108,16 +112,25 @@ int p_generation()
 }
 
 /* Генерирование g числа.
+ * q - простое число, для вычисления g. Все по учебнику
  * */
 int g_generation(int p)
 {
     int g;
-    while(1){
-        g = 1 + rand() % p;
-        if(test_prime(g) == 1)
-            continue;
-        else{
-            return g;
+int help;
+    int q = (p - 1) / 2;
+    if(test_prime(q) == 1){
+        return -1;
+    }else{
+        while(1){
+            g = 1 + rand() % (p - 1);
+            help = module_power(g, q, p);
+            if(help != 1){
+                printf("q = %d\n", q);
+                return g;
+            }else{
+                continue;
+            }
         }
     }
 }
@@ -127,9 +140,11 @@ int g_generation(int p)
  * */
 void diffie_hellman()
 {
-    int p, g;
-    p = p_generation();
-    g = g_generation(p);
+    int p, g = -1;
+    while(g == -1){
+        p = p_generation();
+        g = g_generation(p);
+    }
     printf("p = %d\n", p);
     printf("g = %d\n", g);
 

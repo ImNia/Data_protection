@@ -6,7 +6,7 @@
 #include <time.h>
 
 long long module_power(long long base, long long power_exponent, long long moduli);
-long long *evklid(long long _older, long long _junior);
+void evklid(long long _older, long long _junior, long long *older);
 void diffie_hellman();
 int child_giant(long long base, long long moduli, long long answer);
 
