@@ -31,13 +31,14 @@ void shamir(int message)
         printf("halol\n");
 }
 
-int el_gamal_coder(int message)
-{
-    FILE *el_gamal_coder = fopen("el_gamal_coder.txt", "ab");
-    FILE *el_gamal_key = fopen("el_gamal_key.txt", "ab");
 
-    int p = p_generation();
-    int g = g_generation(p);
+/*  Кодирование файла шифром Эль Гамаля, на вход получает сообщение
+ *  и сгеренерированые p и g
+ * */
+void el_gamal_coder(int message, int p, int g)
+{
+    FILE *el_gamal_coder = fopen("el_gamal_file/el_gamal_coder.txt", "ab");
+    FILE *el_gamal_key = fopen("el_gamal_file/el_gamal_key.txt", "ab");
 
     long long cb = 1 + rand() % (p - 1);
     long long db = module_power(g, cb, p);
@@ -50,15 +51,19 @@ int el_gamal_coder(int message)
     fwrite(&e, sizeof(long long), 1, el_gamal_coder);
     fwrite(&cb, sizeof(long long), 1, el_gamal_key);
     
-    return p;
+    fclose(el_gamal_coder);
+    fclose(el_gamal_key);
 }
 
+/*  Декодирование файла шифром Эль Гамаля, на вход получает
+ *  простое число p
+ * */
 void el_gamal_decoder(int p)
 {
-    FILE *el_gamal_coder = fopen("el_gamal_coder.txt", "rb");
-    FILE *el_gamal_key = fopen("el_gamal_key.txt", "rb");
+    FILE *el_gamal_coder = fopen("el_gamal_file/el_gamal_coder.txt", "rb");
+    FILE *el_gamal_key = fopen("el_gamal_file/el_gamal_key.txt", "rb");
     
-    FILE *el_gamal_decoder = fopen("el_gamal_decoder.txt", "wb");
+    FILE *el_gamal_decoder = fopen("el_gamal_file/el_gamal_decoder.txt", "wb");
     
     long long cb;
     long long r, e;
@@ -67,39 +72,47 @@ void el_gamal_decoder(int p)
     int help = 1;
     while(help > 0){
         fread(&r, sizeof(long long), 1, el_gamal_coder);
-        fread(&e, sizeof(long long), 1, el_gamal_coder);
+        help = fread(&e, sizeof(long long), 1, el_gamal_coder);
         fread(&cb, sizeof(long long), 1, el_gamal_key);
         
         message_b = ((e % p) * module_power(r, p - 1 - cb, p)) % p;
-        printf("Msg\t%lld\n", message_b);
-        help = fwrite(&message_b, sizeof(long long), 1, el_gamal_decoder);
+        fwrite(&message_b, sizeof(char), 1, el_gamal_decoder);
     }
+
+    fclose(el_gamal_coder);
+    fclose(el_gamal_key);
+    fclose(el_gamal_decoder);
+}
+
+/* Шифр Эль Гамаля. Шифрует и дешифрует.
+ *
+ * */
+void el_gamal()
+{
+    char str;
+    int p = p_generation();
+    int g = g_generation(p);
+
+    FILE *read_file = fopen("read_file.txt", "rb");
+    
+    if(read_file != NULL){
+        while(fread(&str, sizeof(char), 1, read_file) != 0){
+            el_gamal_coder((int)str, p, g);
+        }
+    }else{
+        printf("File can't open");
+    }
+
+    el_gamal_decoder(p);
+    
+    fclose(read_file);
 }
 
 int main()
 {
     srand(time(NULL));
-    char str;
-
-    FILE *read_file = fopen("read_file.txt", "rb");
-    FILE *key = fopen("key.txt", "rb");
-    FILE *write_file = fopen("write_file.txt", "w");
     
-    //fread(&p, sizeof(int), 1, key);
+    el_gamal();
 
-    int p;
-    if(read_file != NULL){
-        while(fread(&str, sizeof(char), 1, read_file) != 0){
-            p = el_gamal_coder((int)str);
-        }
-    }else{
-        printf("File can't open");
-    }    
-    
-    el_gamal_decoder(p);
-
-    fclose(read_file);
-    fclose(key);
-    fclose(write_file);
     return 0;
 }
