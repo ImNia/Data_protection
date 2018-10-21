@@ -1,12 +1,19 @@
 CC = gcc -Wall
 
-all: kript test
+all: dir kript
+
+dir: ./el_gamal_file ./vernam_file
+
+./el_gamal_file:
+	mkdir el_gamal_file
+
+./vernam_file:
+	mkdir vernam_file
 
 kript: kript.c cipher.c
-	make clean
 	$(CC) -g -o test kript.c hash.c cipher.c -lm
-	mkdir el_gamal_file
 
 clean:
 	rm test
 	rm -rf el_gamal_file
+	rm -rf vernam_file
