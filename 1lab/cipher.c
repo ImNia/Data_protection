@@ -65,14 +65,14 @@ void el_gamal_decoder(int p)
     long long message_b;
 
     int help = 1;
-    fread(&cb, sizeof(long long), 1, el_gamal_key);
     while(help > 0){
         fread(&r, sizeof(long long), 1, el_gamal_coder);
-        help = fread(&e, sizeof(long long), 1, el_gamal_coder);
+        fread(&e, sizeof(long long), 1, el_gamal_coder);
+        fread(&cb, sizeof(long long), 1, el_gamal_key);
         
         message_b = ((e % p) * module_power(r, p - 1 - cb, p)) % p;
         printf("Msg\t%lld\n", message_b);
-        fwrite(&message_b, sizeof(long long), 1, el_gamal_decoder);
+        help = fwrite(&message_b, sizeof(long long), 1, el_gamal_decoder);
     }
 }
 
