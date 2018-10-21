@@ -163,11 +163,90 @@ void vernam()
     fclose(read_file);
 }
 
+/*  Кодирование шифром RSA. На вход получает сообщение
+ *  и простые числа p и q.
+ * */
+void rsa_coder(char message, int p, int q)
+{
+    FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "ab");
+
+    long long n_abonent = p * q;
+    long long moduli = (p - 1) * (q - 1);
+    long long d = moduli - 1;
+
+    long long e = module_power((long long)message, d, n_abonent);
+    fwrite(&e, sizeof(long long), 1, rsa_coder);
+    fclose(rsa_coder);
+}
+
+/*  Декодирование шифром RSA. 
+ *  На вход получает простые числа p и q.
+ * */
+void rsa_decoder(int p, int q)
+{
+    FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "rb");
+    FILE *rsa_decoder = fopen("rsa_file/rsa_decoder.txt", "ab");
+    long long n_abonent = p * q;
+
+    long long e;
+
+    long long moduli = (p - 1) * (q - 1);
+    long long d = moduli - 1;
+    long long c = 0;
+    while(((c * d) % moduli) != 1){
+        c = 1 + rand() % moduli;
+    }
+
+    long long message_decoder;
+    int help = 1;
+    while(help > 0){
+        help = fread(&e, sizeof(long long), 1, rsa_coder);
+        message_decoder = module_power(e, c, n_abonent);
+        fwrite(&message_decoder, sizeof(char), 1, rsa_decoder);
+    }
+
+    fclose(rsa_coder);
+    fclose(rsa_decoder);
+}
+
+/*  Шифр RSA.
+ * */
+void rsa()
+{
+    char str;
+    int p = p_generation();
+    int q = p_generation();
+
+/*    long long moduli = (p - 1) * (q - 1);
+    long long d = moduli - 1;
+    long long c = 0;
+    while(((c * d) % moduli) != 1){
+        c = 1 + rand() % moduli;
+    }
+    FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "ab");
+    fwrite(&c, sizeof(long long), 1, rsa_key);
+    fclose(rsa_key);
+*/
+    FILE *read_file = fopen("read_file.txt", "rb");
+
+    if(read_file != NULL){
+        while(fread(&str, sizeof(char), 1, read_file) != 0){
+            rsa_coder(str, p, q);
+        }
+    }else{
+        printf("File can't open");
+    }
+
+    rsa_decoder(p, q);
+
+    fclose(read_file);
+}
+
 int main()
 {
     srand(time(NULL));
     
-    vernam();
+    rsa();
 
     return 0;
 }
