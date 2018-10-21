@@ -103,7 +103,7 @@ int p_generation()
 {
     int p;
     while(1){
-        p = 10 + rand() % 1000;
+        p = 10 + rand() % 100000;
         if(test_prime(p) == 1)
             continue;
         else
@@ -126,7 +126,7 @@ int help;
             g = 1 + rand() % (p - 1);
             help = module_power(g, q, p);
             if(help != 1){
-                printf("q = %d\n", q);
+//                printf("q = %d\n", q);
                 return g;
             }else{
                 continue;
