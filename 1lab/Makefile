@@ -14,7 +14,7 @@ dir: ./el_gamal_file ./vernam_file ./rsa_file
 	mkdir rsa_file
 
 kript: kript.c cipher.c
-	$(CC) -g -o test kript.c hash.c cipher.c -lm
+	$(CC) -g -o test kript.c hash.c cipher.c test.c -lm
 
 clean:
 	rm test

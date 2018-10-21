@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include "kript.h"
+#include "cipher.h"
 
 /* Шифр Шамира.
  * */
@@ -217,16 +213,6 @@ void rsa()
     int p = p_generation();
     int q = p_generation();
 
-/*    long long moduli = (p - 1) * (q - 1);
-    long long d = moduli - 1;
-    long long c = 0;
-    while(((c * d) % moduli) != 1){
-        c = 1 + rand() % moduli;
-    }
-    FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "ab");
-    fwrite(&c, sizeof(long long), 1, rsa_key);
-    fclose(rsa_key);
-*/
     FILE *read_file = fopen("read_file.txt", "rb");
 
     if(read_file != NULL){
@@ -240,13 +226,4 @@ void rsa()
     rsa_decoder(p, q);
 
     fclose(read_file);
-}
-
-int main()
-{
-    srand(time(NULL));
-    
-    rsa();
-
-    return 0;
 }
