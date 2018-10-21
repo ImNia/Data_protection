@@ -113,7 +113,6 @@ void vernam_coder(char message)
     FILE *vernam_key = fopen("vernam_file/verman_key.txt", "ab");
     
     char coder_key = rand();
-    printf("%c\t%c\n", message, coder_key);
     
     fwrite(&coder_key, sizeof(char), 1, vernam_key);
 
@@ -126,8 +125,8 @@ void vernam_coder(char message)
 
 void vernam_decoder()
 {
-    FILE *vernam_coder = fopen("vernam_file/vernam_coder.txt", "wb");
-    FILE *vernam_key = fopen("vernam_file/verman_key.txt", "wb");
+    FILE *vernam_coder = fopen("vernam_file/vernam_coder.txt", "rb");
+    FILE *vernam_key = fopen("vernam_file/verman_key.txt", "rb");
     FILE *vernam_decoder = fopen("vernam_file/verman_decoder.txt", "ab");
 
     char coder_word, coder_key, message;
