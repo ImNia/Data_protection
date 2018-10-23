@@ -191,19 +191,24 @@ void rsa_coder(int p, int q)
     long long d;
 
     long long *evk = (long long*)malloc(4);
+    long long c;
     evk[0] = 0;
     while(evk[0] != 1){
         d = 1 + rand() % (moduli - 1);
         evklid(d, moduli, evk);
+        c = evk[1];
+        if(c < 0)
+            c += moduli;
+        if(evk[0] == 1){
+            evk[0] = 0;
+            if((c * d) % moduli == 1){
+                evk[0] = 1;
+                printf("%lld\t%lld\n", d, c);
+            }
+        }else
+            printf("No\n");
     }
     
-    long long c = 0;
-    evk[0] = 0;
-    while(evk[0] != 1){
-        c = 1 + rand() % moduli;
-        evklid(c, d, evk);
-    }
-    c = evk[2];
     fwrite(&c, sizeof(long long), 1, rsa_key);
 
     char str;
@@ -217,6 +222,7 @@ void rsa_coder(int p, int q)
         printf("File can't open");
     }
 
+    free(evk);
     fclose(read_file);
     fclose(rsa_coder);
     fclose(rsa_key);
