@@ -7,7 +7,7 @@
 
 #include "kript.h"
 
-void shamir(int message);
+void shamir();
 void el_gamal();
 void vernam();
 void rsa();

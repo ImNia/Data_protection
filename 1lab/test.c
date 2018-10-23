@@ -10,6 +10,9 @@ int main()
 {
     srand(time(NULL));
 
+//    shamir();
+//    el_gamal();
+//    vernam();
     rsa();
 
     return 0;
