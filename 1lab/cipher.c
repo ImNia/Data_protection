@@ -208,8 +208,8 @@ void rsa_coder(long long p, long long q)
         }else
             printf("No\n");
     }
-    
-    fwrite(&c, sizeof(long long), 1, rsa_key);
+printf("%lld\n", c);    
+    fwrite(&d, sizeof(long long), 1, rsa_key);
 
     char str;
     long long e;
@@ -221,7 +221,7 @@ void rsa_coder(long long p, long long q)
     }else{
         printf("File can't open");
     }
-
+printf("\n");
     free(evk);
     fclose(read_file);
     fclose(rsa_coder);
@@ -231,7 +231,7 @@ void rsa_coder(long long p, long long q)
 /*  Декодирование шифром RSA. 
  *  На вход получает простые числа p и q.
  * */
-void rsa_decoder(int p, int q)
+void rsa_decoder(long long p, long long q)
 {
     FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "rb");
     FILE *rsa_decoder = fopen("rsa_file/rsa_decoder.txt", "wb");
@@ -240,6 +240,7 @@ void rsa_decoder(int p, int q)
 
     long long c;
     fread(&c, sizeof(long long), 1, rsa_key);
+printf("%lld\n", c);    
 
     long long message_decoder;
     long long e;
@@ -264,6 +265,6 @@ void rsa()
 
     rsa_coder((long long)p, (long long)q);
 
-    rsa_decoder(p, q);
+    rsa_decoder((long long)p, (long long)q);
 
 }
