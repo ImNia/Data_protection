@@ -180,7 +180,7 @@ void vernam()
 /*  Кодирование шифром RSA. На вход получает сообщение
  *  и простые числа p и q.
  * */
-void rsa_coder(int p, int q)
+void rsa_coder(long long p, long long q)
 {
     FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "wb");
     FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "wb");
@@ -189,21 +189,21 @@ void rsa_coder(int p, int q)
     long long n_abonent = p * q;
     long long moduli = (p - 1) * (q - 1);
     long long d;
-
+    
     long long *evk = (long long*)malloc(4);
     long long c;
     evk[0] = 0;
     while(evk[0] != 1){
         d = 1 + rand() % (moduli - 1);
         evklid(d, moduli, evk);
-        c = evk[1];
+        c = evk[2];
         if(c < 0)
             c += moduli;
         if(evk[0] == 1){
             evk[0] = 0;
             if((c * d) % moduli == 1){
                 evk[0] = 1;
-                printf("%lld\t%lld\n", d, c);
+                printf("%lld\t%lld\t%lld\n", c, d, moduli);
             }
         }else
             printf("No\n");
@@ -262,7 +262,7 @@ void rsa()
     int p = p_generation();
     int q = p_generation();
 
-    rsa_coder(p, q);
+    rsa_coder((long long)p, (long long)q);
 
     rsa_decoder(p, q);
 
