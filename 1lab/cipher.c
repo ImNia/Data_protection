@@ -209,7 +209,7 @@ void rsa_coder(long long p, long long q)
             printf("No\n");
     }
 printf("%lld\n", c);    
-    fwrite(&d, sizeof(long long), 1, rsa_key);
+    fwrite(&c, sizeof(long long), 1, rsa_key);
 
     char str;
     long long e;
@@ -235,7 +235,7 @@ void rsa_decoder(long long p, long long q)
 {
     FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "rb");
     FILE *rsa_decoder = fopen("rsa_file/rsa_decoder.txt", "wb");
-    FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "wb");
+    FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "rb");
     long long n_abonent = p * q;
 
     long long c;
