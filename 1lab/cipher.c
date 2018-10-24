@@ -203,12 +203,9 @@ void rsa_coder(long long p, long long q)
             evk[0] = 0;
             if((c * d) % moduli == 1){
                 evk[0] = 1;
-                printf("%lld\t%lld\t%lld\n", c, d, moduli);
             }
-        }else
-            printf("No\n");
+        }
     }
-printf("%lld\n", c);    
     fwrite(&c, sizeof(long long), 1, rsa_key);
 
     char str;
@@ -221,7 +218,6 @@ printf("%lld\n", c);
     }else{
         printf("File can't open");
     }
-printf("\n");
     free(evk);
     fclose(read_file);
     fclose(rsa_coder);
@@ -240,7 +236,6 @@ void rsa_decoder(long long p, long long q)
 
     long long c;
     fread(&c, sizeof(long long), 1, rsa_key);
-printf("%lld\n", c);    
 
     long long message_decoder;
     long long e;
