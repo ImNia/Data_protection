@@ -1,20 +1,15 @@
 CC = gcc -Wall
 
-all: dir kript
+.PHONY : clean
 
-dir: ./shamir_file ./el_gamal_file ./vernam_file ./rsa_file
+all: dir kript 
 
-./shamir_file:
-	mkdir shamir_file
-
-./el_gamal_file:
-	mkdir el_gamal_file
-
-./vernam_file:
-	mkdir vernam_file
-
-./rsa_file:
-	mkdir rsa_file
+dir: 
+	mkdir -p shamir_file
+	mkdir -p el_gamal_file
+	mkdir -p vernam_file
+	mkdir -p rsa_file
+	mkdir -p sign_rsa
 
 kript: kript.c cipher.c
 	$(CC) -g -o test kript.c hash.c cipher.c test.c -lm
@@ -25,3 +20,4 @@ clean:
 	rm -rf el_gamal_file
 	rm -rf vernam_file
 	rm -rf rsa_file
+	rm -rf sign_rsa

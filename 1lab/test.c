@@ -11,9 +11,9 @@ int main()
     srand(time(NULL));
 
 //    shamir();
-//    el_gamal();
+    el_gamal();
 //    vernam();
-    rsa();
+//    rsa();
 
     return 0;
 }
