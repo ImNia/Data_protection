@@ -18,7 +18,7 @@ void sha256(char *string, char outputBuffer[65])
     outputBuffer[64] = 0;
 }
 
-int sha256_file(char *path, char outputBuffer[65])
+int sha256_file(char *path, unsigned char *outputBuffer)
 {
     FILE *file = fopen(path, "rb");
     if(!file) return -534;
@@ -26,26 +26,21 @@ int sha256_file(char *path, char outputBuffer[65])
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
-    const int bufSize = 32768;
-    unsigned char *buffer = malloc(bufSize);
+    unsigned char buffer;
     int bytesRead = 0;
-    if(!buffer) return -1;
-    while((bytesRead = fread(buffer, 1, bufSize, file)))
+    while((bytesRead = fread(&buffer, 1, sizeof(buffer), file)))
     {
-        SHA256_Update(&sha256, buffer, bytesRead);
+        SHA256_Update(&sha256, &buffer, bytesRead);
     }
-    SHA256_Final(hash, &sha256);
+    SHA256_Final(outputBuffer, &sha256);
 
-    sha256_hash_string(hash, outputBuffer);
     fclose(file);
-    free(buffer);
     return 0;
 }
 
 void sign_rsa_coder()
 {
-    FILE *read_file = fopen("read_file.txt", "rb");
-    FILE *sign_rsa_key = fopen("sign_rsa/sign_rsa_key", "wb");
+    FILE *sign_rsa_key = fopen("sign_rsa/sign_rsa_key.txt", "wb");
 
     long long p = p_generation();
     long long q = p_generation();
@@ -73,17 +68,16 @@ void sign_rsa_coder()
     fwrite(&n, sizeof(long long), 1, sign_rsa_key);
     fwrite(&d, sizeof(long long), 1, sign_rsa_key);
 
-    static unsigned char buffer[65];
+    unsigned char *buffer = malloc(65);
     sha256_file("read_file.txt", buffer);
     printf("%s\n", buffer);
 
     fclose(sign_rsa_key);
-    fclose(read_file);
 }
 
 void sign_rsa()
 {
-    sign_rsa();
+    sign_rsa_coder();
 }
 
 int main()
