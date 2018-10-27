@@ -9,8 +9,8 @@ void shamir()
     FILE *shamir_decoder = fopen("shamir_file/shamir_decoder.txt", "wb");
     FILE *shamir_key = fopen("shamir_file/shamir_key.txt", "wb");
 
-    char message;
-    while(fread(&message, sizeof(char), 1, read_file) != 0){
+    unsigned char message;
+    while(fread(&message, sizeof(message), 1, read_file) != 0){
         long long p = p_generation();
         long long ca = 0;
         long long da = 0;
@@ -31,16 +31,14 @@ void shamir()
         fwrite(&db, sizeof(long long), 1, shamir_key);
     
         long long x1 = module_power((long long)message, ca, p);
-        fwrite(&x1, sizeof(char), 1, shamir_coder);
         long long x2 = module_power(x1, cb, p);
-        fwrite(&x2, sizeof(char), 1, shamir_coder);
+        fwrite(&x2, sizeof(x2), 1, shamir_coder);
         long long x3 = module_power(x2, da, p);
-        fwrite(&x3, sizeof(char), 1, shamir_decoder);
         long long x4 = module_power(x3, db, p);
-        fwrite(&x4, sizeof(char), 1, shamir_decoder);
+        fwrite(&x4, sizeof(message), 1, shamir_decoder);
     
-        if (message != x4)
-            printf("error\n");
+//        if (message != x4)
+//            printf("error\n");
     }
 
     fclose(read_file);
@@ -56,7 +54,7 @@ void el_gamal_coder(int p, int g)
 {
     FILE *el_gamal_coder = fopen("el_gamal_file/el_gamal_coder.txt", "wb");
     FILE *el_gamal_key = fopen("el_gamal_file/el_gamal_key.txt", "wb");
-    FILE *read_file = fopen("read_file.txt", "rb");
+    FILE *read_file = fopen("6.png", "rb");
     
     char message;
     if(read_file != NULL){
@@ -127,7 +125,7 @@ void vernam_coder()
 {
     FILE *vernam_coder = fopen("vernam_file/vernam_coder.txt", "ab");
     FILE *vernam_key = fopen("vernam_file/verman_key.txt", "ab");
-    FILE *read_file = fopen("read_file.txt", "rb");
+    FILE *read_file = fopen("6.png", "rb");
     
     char message;
     
@@ -184,7 +182,7 @@ void rsa_coder(long long p, long long q)
 {
     FILE *rsa_coder = fopen("rsa_file/rsa_coder.txt", "wb");
     FILE *rsa_key = fopen("rsa_file/rsa_key.txt", "wb");
-    FILE *read_file = fopen("read_file.txt", "rb");
+    FILE *read_file = fopen("6.png", "rb");
 
     long long n_abonent = p * q;
     long long moduli = (p - 1) * (q - 1);
