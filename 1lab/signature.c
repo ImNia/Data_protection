@@ -125,7 +125,6 @@ void sign_el_gamal_coder()
         p = p_generation();
         g = g_generation(p);
     }   
-    printf("g = %lld\n", g);
 
     long long x = 1 + rand() % (p - 1);
     long long y = module_power(g, x, p);
@@ -135,7 +134,6 @@ void sign_el_gamal_coder()
 
     unsigned char *hash = malloc(65);
     sha256_file("read_file.txt", hash);
-    printf("%lld\n", p);
     for(int i = 0; i < sizeof(hash); i++){
         if(hash[i] >= p){
             printf("Error\n");
@@ -152,22 +150,21 @@ void sign_el_gamal_coder()
         if(k_inverst < 0)
             k_inverst += (p - 1);
     }
-    if(((k * k_inverst) % (p - 1)) == 1){
-        printf("Correct\n");
+    if(((k * k_inverst) % (p - 1)) != 1){
+        printf("Uncorrect k-1\n");
     }
 
     long long r = module_power(g, k, p);
     fwrite(&r, sizeof(long long), 1, signature_el_gamal);
 
-    long long u[65];
-    long long s;
+    long long u, s;
     for(int i = 0; i <= sizeof(hash); i++){
-        u[i] = (hash[i] - x * r) % (p - 1);
-        s = (k_inverst * u[i]) % (p - 1);
-        while(s < 0){
-            s += p;
+        u = (hash[i] - x * r) % (p - 1);
+        while(u < 0){
+            u += (p - 1);
         }
-        printf("\t%lld\n", s);
+        s = (k_inverst * u) % (p - 1);
+//        printf("u = %lld\t%lld\n", u[i], s);
         fwrite(&s, sizeof(long long), 1, signature_el_gamal);
     }
 
@@ -195,12 +192,11 @@ void sign_el_gamal_decoder()
         while(s < 0){
             s += p;
         }
-        printf("\t%lld\n", s);
-        help = ((long long)(pow(y, r) * pow(r, s))) % p;
+        help = (module_power(y, r, p) * module_power(r, s, p)) % p;
         helpp = module_power(g, hash[i], p);
-//        printf("%lld\t%lld\n", help, helpp);
+//      printf("%lld\t%lld\n", help, helpp);
         if(help != helpp)
-            printf("Uncorrect\n");
+            printf("Uncorrect check\n");
     }
 
 
