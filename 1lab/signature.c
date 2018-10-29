@@ -160,14 +160,14 @@ void sign_el_gamal_coder()
     fwrite(&r, sizeof(long long), 1, signature_el_gamal);
 
     long long u[65];
-    long long s[65];
-    for(int i = 0; i < sizeof(hash); i++){
+    long long s;
+    for(int i = 0; i <= sizeof(hash); i++){
         u[i] = (hash[i] - x * r) % (p - 1);
-        s[i] = (k_inverst * u[i]) % (p - 1);
-        while(s[i] < 0){
-            s[i] += p;
+        s = (k_inverst * u[i]) % (p - 1);
+        while(s < 0){
+            s += p;
         }
-        printf("\t%lld\n", s[i]);
+        printf("\t%lld\n", s);
         fwrite(&s, sizeof(long long), 1, signature_el_gamal);
     }
 
@@ -187,16 +187,16 @@ void sign_el_gamal_decoder()
     fread(&p, sizeof(p), 1, sign_el_key);
     fread(&g, sizeof(g), 1, sign_el_key);
     fread(&y, sizeof(y), 1, sign_el_key);
-    long long r, s[65];
+    long long r, s;
     fread(&r, sizeof(r), 1, signature_el_gamal);
     long long help, helpp;
-    for(int i = 0; i < sizeof(hash); i++){
-        fread(&s[i], sizeof(long long), 1, signature_el_gamal);
-        while(s[i] < 0){
-            s[i] += p;
+    for(int i = 0; i <= sizeof(hash); i++){
+        fread(&s, sizeof(long long), 1, signature_el_gamal);
+        while(s < 0){
+            s += p;
         }
-        printf("\t%lld\n", s[i]);
-        help = module_power(pow(y, r) * pow(r, s[i]), 1, p);
+        printf("\t%lld\n", s);
+        help = ((long long)(pow(y, r) * pow(r, s))) % p;
         helpp = module_power(g, hash[i], p);
 //        printf("%lld\t%lld\n", help, helpp);
         if(help != helpp)
