@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <openssl/sha.h>
 
 #include "kript.h"
@@ -114,8 +115,101 @@ void sign_rsa()
     sign_rsa_decoder();
 }
 
+void sign_el_gamal_coder()
+{
+    FILE *sign_el_key = fopen("sign_el_gamal/sign_el_key.txt", "wb");
+    FILE *signature_el_gamal = fopen("sign_el_gamal/signature_el_gamal.txt", "wb");
+
+    long long p, g = -1;
+    while(g == -1){
+        p = p_generation();
+        g = g_generation(p);
+    }   
+    printf("g = %lld\n", g);
+
+    long long x = 1 + rand() % (p - 1);
+    long long y = module_power(g, x, p);
+    fwrite(&p, sizeof(p), 1, sign_el_key);
+    fwrite(&g, sizeof(g), 1, sign_el_key);
+    fwrite(&y, sizeof(y), 1, sign_el_key);
+
+    unsigned char *hash = malloc(65);
+    sha256_file("read_file.txt", hash);
+    printf("%lld\n", p);
+    for(int i = 0; i < 65; i++){
+        if(hash[i] >= p){
+            printf("Error\n");
+        }
+    }
+
+    long long k = 0, k_inverst;
+    long long *evk = (long long*)malloc(4);
+    evk[0] = 0;
+    while(evk[0] != 1){
+        k = 1 + rand() % (p - 1);
+        evklid(k, (p - 1), evk);
+        k_inverst = evk[2];
+        if(k_inverst < 0)
+            k_inverst += (p - 1);
+    }
+    if(((k * k_inverst) % (p - 1)) == 1){
+        printf("Correct\n");
+    }
+
+    long long r = module_power(g, k, p);
+    fwrite(&r, sizeof(long long), 1, signature_el_gamal);
+
+    long long u[65];
+    long long s[65];
+    for(int i = 0; i < 65; i++){
+        u[i] = (hash[i] - x * r) % (p - 1);
+        s[i] = (k_inverst * u[i]) % (p - 1);
+        fwrite(&s, sizeof(long long), 1, signature_el_gamal);
+    }
+
+    fclose(sign_el_key);
+    fclose(signature_el_gamal);
+}
+
+void sign_el_gamal_decoder()
+{
+    FILE *sign_el_key = fopen("sign_el_gamal/sign_el_key.txt", "rb");
+    FILE *signature_el_gamal = fopen("sign_el_gamal/signature_el_gamal.txt", "rb");
+
+    unsigned char *hash = malloc(65);
+    sha256_file("read_file.txt", hash);
+   
+    long long p, g, y;
+    fread(&p, sizeof(p), 1, sign_el_key);
+    fread(&g, sizeof(g), 1, sign_el_key);
+    printf("g = %lld\n", g);
+    fread(&y, sizeof(y), 1, sign_el_key);
+    long long r, s[65];
+    fread(&r, sizeof(r), 1, signature_el_gamal);
+    long long help, helpp;
+    for(int i = 0; i < 65; i++){
+        fread(&s[i], sizeof(s[i]), 1, signature_el_gamal);
+        help = pow(y, r) * pow(r, s[i]);
+        helpp = module_power(g, hash[i], p);
+        printf("%lld\t%lld\n", help, helpp);
+        if(help != helpp)
+            printf("Uncorrect\n");
+    }
+
+
+    fclose(sign_el_key);
+    fclose(signature_el_gamal);
+}
+
+void sign_el_gamal()
+{
+    sign_el_gamal_coder();
+    sign_el_gamal_decoder();
+}
+
 int main()
 {
-    sign_rsa();
+    srand(time(NULL));
+    sign_el_gamal();
     return 0;
 }
