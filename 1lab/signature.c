@@ -210,9 +210,108 @@ void sign_el_gamal()
     sign_el_gamal_decoder();
 }
 
+void sign_dsa_coder()
+{
+    FILE *sign_dsa_coder = fopen("sign_dsa/sign_dsa_coder.txt", "wb");
+    FILE *sign_dsa_key = fopen("sign_dsa/sign_dsa_key.txt", "wb");
+    long long q = p_generation();
+    long long b = p_generation();
+    long long p = (b * q) + 1;
+    fwrite(&q, sizeof(q), 1, sign_dsa_key);
+    fwrite(&p, sizeof(p), 1, sign_dsa_key);
+    
+    long long a = 0;
+    while(module_power(a, q, p) != 1){
+        a = 1 + rand() % 10000;
+        printf("%lld\n", a);
+    }
+    fwrite(&a, sizeof(a), 1, sign_dsa_key);
+
+    long long x = 1 + rand() % q;
+    long long y = module_power(a, x, p);
+    fwrite(&y, sizeof(y), 1, sign_dsa_key);
+
+    unsigned char *hash = malloc(65);
+    sha256_file("read_file.txt", hash);
+    for(int i = 0; i < sizeof(hash); i++){
+        if(hash[i] >= q){
+            printf("Error\n");
+        }
+    }
+
+    long long s[sizeof(hash)], help = 1, r = 1;
+
+    while((r != 0) && (help != 0)){
+        help = 1;
+        long long k = 1 + rand() % q;
+        r = (module_power(a, k, p)) % q;
+        for(int i = 0; i < sizeof(hash); i++){
+            s[i] = (k * hash[i] + x * r) % q;
+            if(s[i] == 0)
+               help = 0;
+        }
+    }
+    fwrite(&r, sizeof(r), 1, sign_dsa_coder);
+    for(int i = 0; i < sizeof(s); i++){
+        fwrite(&s[i], sizeof(s[i]), 1, sign_dsa_coder);
+    }
+
+    fclose(sign_dsa_coder);
+    fclose(sign_dsa_key);
+}
+
+void sign_dsa_decoder()
+{
+    FILE *sign_dsa_decoder = fopen("sign_dsa/sign_dsa_coder.txt", "rb");
+    FILE *sign_dsa_key = fopen("sign_dsa/sign_dsa_key.txt", "rb");
+
+    long long q, p, a, y;
+    fread(&q, sizeof(q), 1, sign_dsa_key);
+    fread(&p, sizeof(p), 1, sign_dsa_key);
+    fread(&a, sizeof(a), 1, sign_dsa_key);
+    fread(&y, sizeof(y), 1, sign_dsa_key);
+
+    unsigned char *hash = malloc(65);
+    sha256_file("read_file.txt", hash);
+    for(int i = 0; i < sizeof(hash); i++){
+        if(hash[i] >= q){
+            printf("Error\n");
+        }
+    }
+    long long r, s[sizeof(hash)];
+    fread(&r, sizeof(r), 1, sign_dsa_decoder);
+    if((r < 0) || (r > q))
+        printf("Error r\n");
+    for(int i = 0; i < sizeof(hash); i++){
+        fread(&s[i], sizeof(s[i]), 1, sign_dsa_decoder);
+        if((s[i] < 0) || (s[i] > q))
+            printf("Error s\n");
+    }
+
+    long long u_first[sizeof(hash)], u_second[sizeof(hash)];
+    long long h_inverst, v;
+    for(int i = 0; i < sizeof(hash); i++){
+        h_inverst = module_power(hash[i], -1, q);
+        u_first[i] = (s[i] * h_inverst) % q;
+        u_second[i] = ((-1) * r * h_inverst) % q;
+        v = ((long long)(pow(a, u_first[i]) * pow(y, u_second[i])) % p) % q;
+        if(v != r)
+            printf("Error check\n");
+    }
+
+    fclose(sign_dsa_decoder);
+    fclose(sign_dsa_key);
+}
+
+void sign_dsa()
+{
+    sign_dsa_coder();
+    sign_dsa_decoder();
+}
+
 int main()
 {
     srand(time(NULL));
-    sign_el_gamal();
+    sign_dsa();
     return 0;
 }
