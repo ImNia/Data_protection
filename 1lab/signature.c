@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <openssl/sha.h>
-
-#include "kript.h"
+#include "signature.h"
 
 void sha256(char *string, char outputBuffer[65])
 {
@@ -223,7 +217,6 @@ void sign_dsa_coder()
     long long a = 0;
     while(module_power(a, q, p) != 1){
         a = 1 + rand() % 10000;
-        printf("%lld\n", a);
     }
     fwrite(&a, sizeof(a), 1, sign_dsa_key);
 
@@ -290,8 +283,13 @@ void sign_dsa_decoder()
 
     long long u_first[sizeof(hash)], u_second[sizeof(hash)];
     long long h_inverst, v;
+    long long *evk = (long long*)malloc(4);
+    evk[0] = 0;
     for(int i = 0; i < sizeof(hash); i++){
-        h_inverst = module_power(hash[i], -1, q);
+        while(evk[0] != 1){
+            h_inverst = 1 + rand() % (q - 1);
+            evklid(hash[i], q, evk);
+        }
         u_first[i] = (s[i] * h_inverst) % q;
         u_second[i] = ((-1) * r * h_inverst) % q;
         v = ((long long)(pow(a, u_first[i]) * pow(y, u_second[i])) % p) % q;
@@ -307,11 +305,4 @@ void sign_dsa()
 {
     sign_dsa_coder();
     sign_dsa_decoder();
-}
-
-int main()
-{
-    srand(time(NULL));
-    sign_dsa();
-    return 0;
 }

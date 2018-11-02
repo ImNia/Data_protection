@@ -1,5 +1,6 @@
 #include "kript.h"
 #include "cipher.h"
+#include "signature.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,10 +11,9 @@ int main()
 {
     srand(time(NULL));
 
-//    shamir();
-    el_gamal();
-//    vernam();
-//    rsa();
+    sign_rsa();
+    sign_el_gamal();
+    sign_dsa();
 
     return 0;
 }
