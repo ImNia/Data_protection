@@ -2,13 +2,13 @@
 
 unsigned int hashtab_hash(int key)
 {
-	unsigned int h = 0;
-	int p;
+    unsigned int h = 0;
+    int p;
 
     for(p = key; p != (key + 10); p++){
-		h = h * HASHTAB_MUL + (unsigned int)p;
-	}
-	return h % HASHTAB_SIZE;
+        h = h * HASHTAB_MUL + (unsigned int)p;
+    }
+    return h % HASHTAB_SIZE;
 }
 
 void hashtab_init(struct listnode **hashtab)
