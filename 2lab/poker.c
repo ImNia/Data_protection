@@ -4,6 +4,7 @@
 #include "kript.h"
 #define COUNT 52
 #define PLAYER 3
+#define CARD 2
 
 void prin_pack(long long *card)
 {
@@ -46,7 +47,7 @@ void coder(long long *card, long long *key, long long p)
         card[i] = module_power(help[i], key[0], p);
     }
     mix(card);
-    prin_pack(card);
+//    prin_pack(card);
 }
 
 void decoder(long long *card, long long *key, long long p)
@@ -106,20 +107,20 @@ void mental_poker()
         coder(card, key[i], p);
     }
 
-    long long a_c[PLAYER][2];
+    long long card_player[PLAYER][2];
     for(int num_player = 0; num_player < PLAYER; num_player++){
-        for(int k = 0; k < PLAYER; k++){
-            a_c[num_player][k] = card[(num_player * PLAYER) + k];
+        for(int k = 0; k <= CARD; k++){
+            card_player[num_player][k] = card[(num_player * CARD) + k];
         }
         for(int j = 0; j < PLAYER; j++){
             if(j != num_player)
-                decoder(a_c[num_player], key[j], p);
+                decoder(card_player[num_player], key[j], p);
         }
-        decoder(a_c[num_player], key[num_player], p);  
+        decoder(card_player[num_player], key[num_player], p);  
 
         printf("Player[%d]: ", num_player);
-        for(int l = 0; l < PLAYER; l++){
-            printf(" %lld\t", a_c[num_player][l]);
+        for(int l = 0; l < CARD; l++){
+            printf(" %lld\t", card_player[num_player][l]);
         }
         printf("\n");
     }
