@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "kript.h"
 #define COUNT 52
@@ -47,7 +48,7 @@ void coder(long long *card, long long *key, long long p)
         card[i] = module_power(help[i], key[0], p);
     }
     mix(card);
-//    prin_pack(card);
+    //    prin_pack(card);
 }
 
 void decoder(long long *card, long long *key, long long p)
@@ -86,55 +87,43 @@ void key_gen(long long *key, long long p)
 
 void mental_poker()
 {
-    long long original_card[4][15];
-    original_card[0][0] = 1; //\xe2\x99\xa0; //♠
-    original_card[1][0] = 2; //\xe2\x99\xa5; //♥
-    original_card[2][0] = 3; //\xe2\x99\xa3; //♣
-    original_card[3][0] = 4; //\xe2\x99\xa6; //♦
-    
-    long long *card = malloc(sizeof(long long) * (COUNT + 1));
+    long long original_card[4][13];
 
-    for(int i = 0; i <= COUNT; i++){
-        card[i] = 1 + rand() % 1000;
-        for(int j = 0; j < i; j++){
-            if(card[i] == card[j])
-                card[i] = 1 + rand() % 1000;
+    long long *card = malloc(sizeof(long long) * COUNT);
 
-        }
-    }
-    printf("\n\n");
     for(int i = 0; i < 4; i++){
-        for(int j = 1; j < 15; j++){
-            original_card[i][j] = card[i * 13 + j - 1]; //j + 1;
-//            printf("%lld\t", original_card[i][j]);
-//Отрисовка карт
+        for(int j = 0; j < 13; j++){
+            card[i * 13 + j] = 1 + rand() % 10000;
+            original_card[i][j] = card[i * 13 + j]; //j + 1;
+            //            printf("%lld\t", original_card[i][j]);
+            //Отрисовка карт
             {            
-            if(i == 0)
-                printf("Piki\t");
-            if(i == 1)
-                printf("Chervi\t");
-            if(i == 2)
-                printf("Kresti\t");
-            if(i == 3)
-                printf("Bubi\t");
-            if(j <= 10){
-                printf("%d\t%lld\n", j + 1, original_card[i][j]);
-            }
-            if(j == 11)
-                printf("Balet\t%lld\n", original_card[i][j]);
-            if(j == 12)
-                printf("Dama\t%lld\n", original_card[i][j]);
-            if(j == 13)
-                printf("Korol\t%lld\n", original_card[i][j]);
-            if(j == 14)
-                printf("Tuz\t%lld\n", original_card[i][j]);
+                if(i == 0)
+                    printf("Piki\t");
+                if(i == 1)
+                    printf("Chervi\t");
+                if(i == 2)
+                    printf("Kresti\t");
+                if(i == 3)
+                    printf("Bubi\t");
+                if(j <= 8){
+                    printf("%d\t%lld\n", j + 2, original_card[i][j]);
+                }
+                if(j == 9)
+                    printf("Balet\t%lld\n", original_card[i][j]);
+                if(j == 10)
+                    printf("Dama\t%lld\n", original_card[i][j]);
+                if(j == 11)
+                    printf("Korol\t%lld\n", original_card[i][j]);
+                if(j == 12)
+                    printf("Tuz\t%lld\n", original_card[i][j]);
             }
         }
         printf("\n\n");
     }
-    
+
     long long p = p_generation();
-    
+
 
     long long **key = malloc(sizeof(**key) * PLAYER);
     for(int i = 0; i < PLAYER; i++){
@@ -144,7 +133,7 @@ void mental_poker()
         key_gen(key[i], p);
     }
 
-//    prin_pack(card);
+    //    prin_pack(card);
     for(int i = 0; i < PLAYER; i++){
         coder(card, key[i], p);
     }
@@ -159,34 +148,34 @@ void mental_poker()
                 decoder(card_player[num_player], key[j], p);
         }
         decoder(card_player[num_player], key[num_player], p);  
-        
+
         long long help_card;
         printf("Player[%d]: \n", num_player);
         for(int l = 0; l < CARD; l++){
             for(int i = 0; i < 4; i++){
-                for(int j = 0; j < 15; j++){
+                for(int j = 0; j < 13; j++){
                     if(card_player[num_player][l] == original_card[i][j]){
                         help_card = card_player[num_player][l];
-        {          
-        if(i == 0)
-            printf("Piki\t");
-        if(i == 1)
-            printf("Chervi\t");
-        if(i == 2)
-            printf("Kresti\t");
-        if(i == 3)
-            printf("Bubi\t");
-        if(j <= 10)
-            printf("%d\t%lld\n", j + 1, help_card);
-        if(j == 11)
-            printf("Balet\t%lld\n", help_card);
-        if(j == 12)
-            printf("Dama\t%lld\n", help_card);
-        if(j == 13)
-            printf("Korol\t%lld\n", help_card);
-        if(j == 14)
-            printf("Tuz\t%lld\n", help_card);
-        }
+                        {          
+                            if(i == 0)
+                                printf("Piki\t");
+                            if(i == 1)
+                                printf("Chervi\t");
+                            if(i == 2)
+                                printf("Kresti\t");
+                            if(i == 3)
+                                printf("Bubi\t");
+                            if(j <= 8)
+                                printf("%d\t%lld\n", j + 2, help_card);
+                            if(j == 9)
+                                printf("Balet\t%lld\n", help_card);
+                            if(j == 10)
+                                printf("Dama\t%lld\n", help_card);
+                            if(j == 11)
+                                printf("Korol\t%lld\n", help_card);
+                            if(j == 12)
+                                printf("Tuz\t%lld\n", help_card);
+                        }
                     }
                 }
             }
