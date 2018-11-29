@@ -17,8 +17,7 @@ int sha256_file(char message, unsigned char *outputBuffer)
 {
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
-    int bytesRead = 1;
-    SHA256_Update(&sha256, &message, bytesRead);
+    SHA256_Update(&sha256, &message, sizeof(message));
     SHA256_Final(outputBuffer, &sha256);
 
     return 0;
@@ -53,7 +52,7 @@ void sign_rsa_coder(unsigned char *hash, long long *signature_bank)
     fwrite(&n, sizeof(long long), 1, sign_rsa_key);
     fwrite(&d, sizeof(long long), 1, sign_rsa_key);
 
-    for (int i = 0; i < 65; i++){
+    for (int i = 0; i < sizeof(hash); i++){
         signature_bank[i] = module_power(hash[i], c, n);
     }
 

@@ -103,7 +103,7 @@ int p_generation()
 {
     int p;
     while(1){
-        p = 10 + rand() % 100000;
+        p = 10 + rand() % 10000;
         if(test_prime(p) == 1)
             continue;
         else

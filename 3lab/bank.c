@@ -10,7 +10,7 @@ void bank_from_client(unsigned char *hash, int count_purchase);
 
 void bank_from_client(unsigned char *hash, int count_purchase)
 {
-    //хеш номер купюры
+    //хеш номер купюы
     for(int i = 0; i < SIZE_HASH; i++){
         bank_data[count_purchase][i] = hash[i];
     }
