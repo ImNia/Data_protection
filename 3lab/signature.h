@@ -9,7 +9,7 @@
 
 #include "kript.h"
 
-int sha256_file(char message, unsigned char *outputBuffer);
+int sha256_file(int message, unsigned char *outputBuffer);
 void sign_rsa_coder(unsigned char *hash, long long *signature_bank);
 int sign_rsa_decoder(unsigned char *hash, long long *signature_bank);
 
