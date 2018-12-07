@@ -13,7 +13,7 @@ void sha256(char *string, char outputBuffer[65])
     outputBuffer[64] = 0;
 }
 
-int sha256_file(int message, unsigned char *outputBuffer)
+int sha256_sign(int message, unsigned char *outputBuffer)
 {
     SHA256_CTX sha256;
     SHA256_Init(&sha256);

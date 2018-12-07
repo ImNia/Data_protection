@@ -53,12 +53,24 @@ void coder(long long *card, long long *key, long long p)
 
 void decoder(long long *card, long long *key, long long p)
 {
-    long long help[2];
-    for(int i = 0; i < 2; i++){
+    long long help[CARD];
+    for(int i = 0; i < CARD; i++){
         help[i] = card[i];
     }
 
-    for(int i = 0; i < 2; i++){
+    for(int i = 0; i < CARD; i++){
+        card[i] = module_power(help[i], key[1], p);
+    }
+}
+
+void decoder_table(long long *card, long long *key, long long p)
+{
+    long long help[5];
+    for(int i = 0; i < 5; i++){
+        help[i] = card[i];
+    }
+
+    for(int i = 0; i < 5; i++){
         card[i] = module_power(help[i], key[1], p);
     }
 }
@@ -150,6 +162,24 @@ void mental_poker()
         printf("\n");
     }
 
+    long long on_table_card[1][5];
+    for(int k = 0; k < 5; k++){
+        on_table_card[1][k] = card[(PLAYER * CARD) + k + 1];
+    }
+    for(int num_player = 0; num_player < PLAYER; num_player++){
+            decoder_table(on_table_card[1], key[num_player], p);
+    }
+    printf("\nCard on the table:\n");
+    for(int k = 0; k < 5; k++){
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 13; j++){
+                if(on_table_card[1][k] == original_card[i][j])
+                    print_card(i, j, on_table_card[1][k]);
+            }
+        }
+    }
+    printf("\n");
+
     free(card);
     free(key);
 }
@@ -157,6 +187,11 @@ void mental_poker()
 int main()
 {
     srand(time(NULL));
+    if(PLAYER < 2 || PLAYER > 23){
+        printf("Inadmissible number of player\n");
+        return 0;
+    }
+
     mental_poker();
     return 0;
 }

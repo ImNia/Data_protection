@@ -31,7 +31,7 @@ void client(int count_purchase)
     printf("\n");
     int currency_number = 1 + rand() % 100000;
     unsigned char *hash = malloc(sizeof(int) * SIZE_HASH);
-    sha256_file(currency_number, hash);
+    sha256_sign(currency_number, hash);
     long long *signature_bank = malloc(sizeof(long long) * SIZE_HASH);
     bank_from_client(hash, count_purchase, signature_bank);
     
@@ -41,13 +41,13 @@ void client(int count_purchase)
 int bank_for_store(int face_value, int currency_number, long long *signature_bank)
 {
     unsigned char *hash = malloc(sizeof(int) * SIZE_HASH);
-    sha256_file(currency_number, hash);
+    sha256_sign(currency_number, hash);
     //Сейчас будет убого, простите
     for(int i = 0; i < BASE_BANK; i++){
         for(int j = 0; j < SIZE_HASH; j++){
             if(hash[j] != bank_data[i][j])
                 break;
-            if((j - 1) == BASE_BANK)
+            if((j - 1) == sizeof(hash))
                 printf("Correct currence_number!!\n");
         }
 /*        if(strcmp(hash, bank_data[i]) == 0){
