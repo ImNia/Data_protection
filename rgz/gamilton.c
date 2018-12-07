@@ -47,8 +47,27 @@ void shake(int *graf_shake)
 int main()
 {
     srand(time(NULL));
-    int *graf_shake = malloc((SIZE * SIZE) * sizeof(int));
-    
+    FILE *file = fopen("file.txt", "rb");
+    char ver_file;
+
+    fread(&ver_file, sizeof(char), 1, file);
+
+    int *graf = malloc((ver_file * ver_file) * sizeof(int));
+    int *graf_shake = malloc((ver_file * ver_file) * sizeof(int));
+
+    for(int i = 0; i < ver_file; i++){
+        for(int j = 0; j < ver_file; j++){
+            graf[i + ver_file * j] = 0;
+        }
+    }
+    char i_index, j_index;
+    while(fread(&i_index, sizeof(char), 1, file) != 0){
+        fread(&j_index, sizeof(char), 1, file);
+        printf("%c\t%c\n", i_index, j_index);
+        graf[i_index + ver_file * j_index] = 1;
+        graf[j_index + ver_file * i_index] = 1;
+    }
+
     print_graf(graf);
     shake(graf_shake);
     print_graf(graf_shake);
