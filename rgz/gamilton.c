@@ -39,22 +39,35 @@ void shake(int *graf, int *graf_shake)
     }
 }
 
+void make_big(int *graf_shake, int *secret_graf, int ver_file)
+{
+    for(int i = 0; i < ver_file * ver_file; i++){
+        secret_graf[i] = 1000 + rand() % 10000;
+    }
+    print_graf(secret_graf);
+
+    for(int i = 0; i < ver_file * ver_file; i++){
+        if(graf_shake[i] == 1)
+            secret_graf[i] = secret_graf[i] | 1;
+        else{
+            secret_graf[i] = secret_graf[i] >> 1;
+            secret_graf[i] = secret_graf[i] << 1;
+            secret_graf[i] = secret_graf[i] | 0;
+        }
+    }
+}
+
 int main()
 {
     srand(time(NULL));
     FILE *file = fopen("file.txt", "r");
-    char ver_file;
+    int ver_file;
 
-    fread(&ver_file, sizeof(char), 1, file);
+    fscanf(file, "%d", &ver_file);
 
     int *graf = malloc((ver_file * ver_file) * sizeof(int));
     int *graf_shake = malloc((ver_file * ver_file) * sizeof(int));
 
-    for(int i = 0; i < ver_file; i++){
-        for(int j = 0; j < ver_file; j++){
-            graf[i + ver_file * j] = 0;
-        }
-    }
     int index;
     for(int i = 0; i < ver_file * ver_file; i++){
         fscanf(file, "%d", &index);
@@ -68,6 +81,12 @@ int main()
     shake(graf, graf_shake);
     print_graf(graf_shake);
 
+    int *secret_graf = malloc((ver_file * ver_file) * sizeof(int));
+    make_big(graf_shake, secret_graf, ver_file);
+    print_graf(secret_graf);
+
+    free(graf);
     free(graf_shake);
+    fclose(file);
     return 0;
 }
