@@ -4,11 +4,6 @@
 
 #define SIZE 4
 
-int graf[SIZE * SIZE] = {1, 1, 0, 0,
-                         1, 1, 1, 1,
-                         0, 1, 1, 1,
-                         0, 1, 1, 1};
-
 void print_graf(int *graf_p)
 {
     for(int i = 0; i < SIZE * SIZE; i++){
@@ -19,7 +14,7 @@ void print_graf(int *graf_p)
     printf("\n");
 }
 
-void shake(int *graf_shake)
+void shake(int *graf, int *graf_shake)
 {
     int versh[SIZE];
     int help_versh[SIZE] = {0, 1, 2, 3};
@@ -47,7 +42,7 @@ void shake(int *graf_shake)
 int main()
 {
     srand(time(NULL));
-    FILE *file = fopen("file.txt", "rb");
+    FILE *file = fopen("file.txt", "r");
     char ver_file;
 
     fread(&ver_file, sizeof(char), 1, file);
@@ -60,16 +55,17 @@ int main()
             graf[i + ver_file * j] = 0;
         }
     }
-    char i_index, j_index;
-    while(fread(&i_index, sizeof(char), 1, file) != 0){
-        fread(&j_index, sizeof(char), 1, file);
-        printf("%c\t%c\n", i_index, j_index);
-        graf[i_index + ver_file * j_index] = 1;
-        graf[j_index + ver_file * i_index] = 1;
+    int index;
+    for(int i = 0; i < ver_file * ver_file; i++){
+        fscanf(file, "%d", &index);
+        if(index == 1)
+            graf[i] = 1;
+        else
+            graf[i] = 0;
     }
 
     print_graf(graf);
-    shake(graf_shake);
+    shake(graf, graf_shake);
     print_graf(graf_shake);
 
     free(graf_shake);
