@@ -4,8 +4,8 @@ CC = gcc -Wall
 
 all: main
 
-main: gamilton.c
-	$(CC) -g -o test gamilton.c
+main: gamilton.c kript.c hash.c
+	$(CC) -g -o test gamilton.c kript.c hash.c -lm
 
 clean:
 	rm test
